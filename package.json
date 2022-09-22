@@ -1,0 +1,25 @@
+{
+  "name": "sql-employee-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianmckennaman/sql-employee-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brianmckennaman/sql-employee-tracker/issues"
+  },
+  "homepage": "https://github.com/brianmckennaman/sql-employee-tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^9.1.2",
+    "mysql2": "^2.3.3"
+  }
+}
