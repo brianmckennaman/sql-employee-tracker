@@ -1,7 +1,7 @@
 const inquirer = require('inquirer')
 const express = require('express')
 const mysql = require('mysql2')
-const consoleTable = require('console.table');
+require('console.table');
 
 const app = express();
 
@@ -12,7 +12,7 @@ const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: '',
+        password: 'Redpopsicle2$',
         database: 'company_db'
     },
     console.log('Connected to database')
@@ -30,20 +30,13 @@ inquirer
     ])
     .then((response) => {
         if (response.starting_choice === 'View all departments') {
-            db.query(`SELECT * FROM department`, function (err, results) {
-                console.table(results);
-            })
-            mainMenu();
+            viewDepartments();
             
     } else if(response.starting_choice === 'View all roles') {
-            db.query(`SELECT * FROM roles`, function (err, results) {
-                console.table(results)})
-            mainMenu();
+            viewRoles();
 
     } else if(response.starting_choice === 'View all employees') {
-            db.query(`SELECT * FROM employee`, function (err, results) {
-                console.table(results)})
-            mainMenu();
+            viewEmployees();
 
     } else if(response.starting_choice === 'Add a department') {
             addDepartment();
@@ -57,7 +50,32 @@ inquirer
     } else {
         updateRole();
     }})};
+
     mainMenu();
+
+    function viewDepartments() {
+        console.log('Viewing all departments');
+        db.query(`SELECT * FROM department`, function (err, results) {
+            console.table(results);
+        });
+        mainMenu();
+    };
+
+    function viewRoles() {
+        console.log('Viewing all roles');
+        db.query(`SELECT * FROM roles`, function (err, results) {
+            console.table(results);
+        });
+        mainMenu();
+    }
+
+    function viewEmployees() {
+        console.log('Viewing all employees');
+        db.query(`SELECT * FROM employee`, function (err, results) {
+            console.table(results);
+        });
+        mainMenu();
+    }
     
     function addDepartment() {
         inquirer
