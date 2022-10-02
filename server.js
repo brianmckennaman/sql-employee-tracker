@@ -1,9 +1,8 @@
 const inquirer = require('inquirer')
 const express = require('express')
 const mysql = require('mysql2')
-const consoleTable = require('console.table')
+const consoleTable = require('console.table');
 
-const PORT = process.env.PORT || 3001;
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
@@ -13,7 +12,7 @@ const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: 'Redpopsicle2$',
+        password: '',
         database: 'company_db'
     },
     console.log('Connected to database')
@@ -31,15 +30,19 @@ inquirer
     ])
     .then((response) => {
         if (response.starting_choice === 'View all departments') {
-            db.query(`SELECT * FROM department`)
+            db.query(`SELECT * FROM department`, function (err, results) {
+                console.table(results);
+            })
             mainMenu();
             
     } else if(response.starting_choice === 'View all roles') {
-            db.query(`SELECT * FROM role`)
+            db.query(`SELECT * FROM roles`, function (err, results) {
+                console.table(results)})
             mainMenu();
 
     } else if(response.starting_choice === 'View all employees') {
-            db.query(`SELECT * FROM employee`)
+            db.query(`SELECT * FROM employee`, function (err, results) {
+                console.table(results)})
             mainMenu();
 
     } else if(response.starting_choice === 'Add a department') {
@@ -124,7 +127,3 @@ inquirer
             }
         ])
     }
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
