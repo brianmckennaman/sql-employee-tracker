@@ -16,7 +16,7 @@ const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: 'Redpopsicle2$',
+        password: '',
         database: 'company_db'
     },
     console.log('Connected to database')
@@ -163,8 +163,8 @@ async function addEmployee() {
      console.log(managers[0])
     var data = await inquirer.prompt([{
         type: 'list',
-        message: 'To  department wilwhichl he/she/they belong?',
-        name: 'dept',
+        message: 'Which manager will this employee report too?',
+        name: 'manager',
         choices: managers[0]
     }])
      return console.log(data)
