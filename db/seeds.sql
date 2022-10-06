@@ -8,8 +8,8 @@ VALUES ("Salesperson", "5000.00", 1),
 ("Temp", "1000.00", 5);
 
 INSERT INTO employee (first_name, last_name, roles_id, manager_id)
-VALUES ("Anthony", "Clark", 1, NULL),
-("Tiffany", "Chandler", 1, NULL),
+VALUES ("Anthony", "Clark", 3, NULL),
+("Tiffany", "Chandler", 3, NULL),
 ("Josh", "Stevenson", 1, 1),
-("Lucy", "Steele", 1, 3),
-("Harold", "Gray", 1, 3);
+("Lucy", "Steele", 1, 2),
+("Harold", "Gray", 1, 2);

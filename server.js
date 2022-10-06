@@ -16,7 +16,7 @@ const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: '',
+        password: 'Redpopsicle2$',
         database: 'company_db'
     },
     console.log('Connected to database')
@@ -77,6 +77,7 @@ function viewDepartments() {
 function viewRoles() {
     console.log('Viewing all roles');
     db.query(`SELECT roles.id, roles.title, roles.salary, department.name FROM roles JOIN department ON roles.department_id = department.id`, function (err, results) {
+        console.log(`\n\n============\n`)
         console.table(results);
     });
     mainMenu();
@@ -85,6 +86,7 @@ function viewRoles() {
 function viewEmployees() {
     console.log('Viewing all employees');
     db.query(`SELECT * FROM employee`, function (err, results) {
+        console.log(`\n\n============\n`)
         console.table(results);
     });
     mainMenu();
@@ -161,35 +163,30 @@ async function addRole() {
 async function addEmployee() {
     var managers = await db.promise().query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee WHERE manager_id IS NULL ')
      console.log(managers[0])
+    var roles = await db.promise().query('SELECT id FROM roles');
+    console.log(roles[0]);
     var data = await inquirer.prompt([{
         type: 'list',
         message: 'Which manager will this employee report too?',
         name: 'manager',
         choices: managers[0]
+    },
+    {
+        type: 'input',
+        message: 'Enter employee first name',
+        name: 'first_name',
+    },
+    {
+        type: 'input',
+        message: 'Enter employee last name',
+        name: 'last_name',
+    },
+    {
+        type: 'list',
+        message: 'What role will this employee have?',
+        name: 'role',
+        choices: roles[0]
     }])
-     return console.log(data)
-
-
-    inquirer
-        .prompt([
-            {
-                type: 'input',
-                message: 'Enter the first name of the employee',
-                name: 'firstName'
-            },
-            {
-                type: 'input',
-                message: 'Enter the last name of the employee',
-                name: 'lastName'
-            }
-        ])
-        .then((response) => {
-            db.query(`INSERT INTO employee (id, first_name, last_name) VALUES (, ${response.firstName}, ${response.lastName})`, function (err, results) {
-                console.log(results, 'Added successfully!')
-            })
-
-            mainMenu();
-        })
 }
 
 function updateEmployee() {
