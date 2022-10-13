@@ -187,17 +187,48 @@ async function addEmployee() {
         name: 'role',
         choices: roles[0]
     }])
-}
 
-function updateEmployee() {
-    inquirer
+    db.execute(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`, [data.first_name, data.last_name, data.role, data.manager], function (err, data) {
+        if (err) { console.log(err) }
+        else {
+            console.log('Inserted!')
+            console.log(data)
+        }
+    })
+    mainMenu();
+};
+
+async function updateEmployee() {
+    var employeeList = await db.promise().query('SELECT id FROM employee')
+    console.log(employeeList[0]) 
+    var roles = await db.promise().query('SELECT id FROM roles');
+    console.log(roles[0]);
+    var data = await inquirer
         .prompt([
             {
                 type: 'list',
                 message: 'Choose the employee to update',
                 name: 'chooseEmployee',
-                choices: `db.query(SELECT employee_name FROM employee)`
-
+                choices: employeeList[0],
+            },
+            {
+                type: 'list',
+                message: 'Choose the new role for this employee',
+                name: 'update_role',
+                choices: roles[0],
             }
         ])
+        db.execute(`UPDATE employee SET name  (first_name, last_name, role_id,) VALUES (?,?,?)`, [data.first_name, data.last_name, data.role], function (err, data) {
+            if (err) { console.log(err) }
+            else {
+                console.log('Inserted!')
+                console.log(data)
+            }
+        })
+        mainMenu();
 }
+
+
+
+
+
