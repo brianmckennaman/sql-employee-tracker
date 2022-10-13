@@ -164,7 +164,10 @@ async function addEmployee() {
     var managers = await db.promise().query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee WHERE manager_id IS NULL ')
      console.log(managers[0])
     var roles = await db.promise().query('SELECT id FROM roles');
-    console.log(roles[0]);
+    console.log(roles);
+    var roleList = roles.map(({id, title}) => {
+        return title;
+    });
     var data = await inquirer.prompt([{
         type: 'list',
         message: 'Which manager will this employee report too?',
@@ -185,7 +188,7 @@ async function addEmployee() {
         type: 'list',
         message: 'What role will this employee have?',
         name: 'role',
-        choices: roles[0]
+        choices: roleList
     }])
 
     db.execute(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`, [data.first_name, data.last_name, data.role, data.manager], function (err, data) {
