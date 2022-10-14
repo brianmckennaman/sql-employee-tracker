@@ -64,7 +64,7 @@ function mainMenu() {
 // run function
 mainMenu();
 
-
+// view departments function
 function viewDepartments() {
     console.log('Viewing all departments');
     db.query(`SELECT * FROM department`, function (err, results) {
@@ -74,6 +74,7 @@ function viewDepartments() {
     mainMenu();
 };
 
+// view roles function
 function viewRoles() {
     console.log('Viewing all roles');
     db.query(`SELECT roles.id, roles.title, roles.salary, department.name FROM roles JOIN department ON roles.department_id = department.id`, function (err, results) {
@@ -83,6 +84,7 @@ function viewRoles() {
     mainMenu();
 }
 
+// view employees function
 function viewEmployees() {
     console.log('Viewing all employees');
     db.query(`SELECT * FROM employee`, function (err, results) {
@@ -92,6 +94,7 @@ function viewEmployees() {
     mainMenu();
 }
 
+// add department function
 function addDepartment() {
     inquirer
         .prompt([
@@ -106,7 +109,6 @@ function addDepartment() {
                 if (err) { console.log(err) }
                 else {
                     console.log("Inserted!")
-                    console.log(results)
                 }
             })
             mainMenu();
@@ -149,22 +151,22 @@ async function addRole() {
         if (err) { console.log(err) }
         else {
             console.log("Inserted!")
-            console.log(results)
         }
     })
     mainMenu()   
 }
 
-
+// add employee function
 async function addEmployee() {
+    // retrieve managers by id
     var managers = await db.promise().query('SELECT id, CONCAT (first_name, last_name) AS manager FROM employee WHERE manager_id is NULL')
-     console.log('managers[0]', managers[0])
+    //  retrieve roles
     var roles = await db.promise().query('SELECT * FROM roles');
-    console.log(roles);
+    // extract the roles by name and id
     var roleList = roles[0].map(({id, title}) => ({
         name: title, value: id
     }));
-    console.log(roleList)
+    // run inquirer prompts
     var data = await inquirer.prompt([{
         type: 'input',
         message: 'Enter the id of the manager',
@@ -187,8 +189,7 @@ async function addEmployee() {
         choices: roleList
     }])
 
-    console.log(data);
-
+    // insert into employees table
     db.execute(`INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES (?,?,?,?)`, [data.first_name, data.last_name, data.role, data.manager], function (err, data) {
         if (err) { console.log(err) }
         else {
@@ -198,17 +199,21 @@ async function addEmployee() {
     mainMenu();
 };
 
+// update employee function
 async function updateEmployee() {
+    // retrieve employee names
     var employeeList = await db.promise().query('SELECT id, CONCAT (first_name, " ", last_name) AS name FROM employee')
+    // extract employee data
     var employeeId = employeeList[0].map(({id, name}) => ({
         name: name, value: id 
     }));
+    // retrieve roles
     var roles = await db.promise().query('SELECT * FROM roles');
-    console.log(roles);
+    // extract role data
     var roleList = roles[0].map(({id, title}) => ({
         name: title, value: id
     }));
-    console.log(roleList)
+    // run inquirer prompts
     var data = await inquirer
         .prompt([
             {
@@ -224,6 +229,7 @@ async function updateEmployee() {
                 choices: roleList,
             }
         ])
+        // update the table
         db.execute(`UPDATE employee SET roles_id = ${data.update_role} WHERE id = ${data.chooseEmployee}`, function (err, data) {
             if (err) { console.log(err) }
             else {
