@@ -137,10 +137,6 @@ async function addRole() {
                 }
             ])
 
-     console.log(data)
-
-     console.log(data.dept)
-
      var correctDepartment = departments.filter(function(department) {
         if(department.name === data.dept){
             return department.id
@@ -161,18 +157,18 @@ async function addRole() {
 
 
 async function addEmployee() {
-    var managers = await db.promise().query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee WHERE manager_id IS NULL ')
-     console.log(managers[0])
-    var roles = await db.promise().query('SELECT id FROM roles');
+    var managers = await db.promise().query('SELECT id, CONCAT (first_name, last_name) AS manager FROM employee WHERE manager_id is NULL')
+     console.log('managers[0]', managers[0])
+    var roles = await db.promise().query('SELECT * FROM roles');
     console.log(roles);
-    var roleList = roles.map(({id, title}) => {
-        return title;
-    });
+    var roleList = roles[0].map(({id, title}) => ({
+        name: title, value: id
+    }));
+    console.log(roleList)
     var data = await inquirer.prompt([{
-        type: 'list',
-        message: 'Which manager will this employee report too?',
+        type: 'input',
+        message: 'Enter the id of the manager',
         name: 'manager',
-        choices: managers[0]
     },
     {
         type: 'input',
@@ -191,47 +187,48 @@ async function addEmployee() {
         choices: roleList
     }])
 
-    db.execute(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`, [data.first_name, data.last_name, data.role, data.manager], function (err, data) {
+    console.log(data);
+
+    db.execute(`INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES (?,?,?,?)`, [data.first_name, data.last_name, data.role, data.manager], function (err, data) {
         if (err) { console.log(err) }
         else {
             console.log('Inserted!')
-            console.log(data)
         }
     })
     mainMenu();
 };
 
 async function updateEmployee() {
-    var employeeList = await db.promise().query('SELECT id FROM employee')
-    console.log(employeeList[0]) 
-    var roles = await db.promise().query('SELECT id FROM roles');
-    console.log(roles[0]);
+    var employeeList = await db.promise().query('SELECT id, CONCAT (first_name, " ", last_name) AS name FROM employee')
+    var employeeId = employeeList[0].map(({id, name}) => ({
+        name: name, value: id 
+    }));
+    var roles = await db.promise().query('SELECT * FROM roles');
+    console.log(roles);
+    var roleList = roles[0].map(({id, title}) => ({
+        name: title, value: id
+    }));
+    console.log(roleList)
     var data = await inquirer
         .prompt([
             {
                 type: 'list',
                 message: 'Choose the employee to update',
                 name: 'chooseEmployee',
-                choices: employeeList[0],
+                choices: employeeId,
             },
             {
                 type: 'list',
                 message: 'Choose the new role for this employee',
                 name: 'update_role',
-                choices: roles[0],
+                choices: roleList,
             }
         ])
-        db.execute(`UPDATE employee SET name  (first_name, last_name, role_id,) VALUES (?,?,?)`, [data.first_name, data.last_name, data.role], function (err, data) {
+        db.execute(`UPDATE employee SET roles_id = ${data.update_role} WHERE id = ${data.chooseEmployee}`, function (err, data) {
             if (err) { console.log(err) }
             else {
-                console.log('Inserted!')
-                console.log(data)
+                console.log('Role changed!')
             }
         })
         mainMenu();
 }
-
-
-
-
-
